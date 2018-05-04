@@ -176,9 +176,8 @@ namespace MonoDevelop.Projects
 		{
 			System.Console.WriteLine ("OnFileRenamed: {0} -> {1}", e.OldFullPath, e.FullPath);
 
-			if (IsTempFileRename (e)) {
-				FileService.NotifyFileChanged (e.FullPath);
-			}
+			// Treat a rename as a change for the target file.
+			FileService.NotifyFileChanged (e.FullPath);
 		}
 
 		void OnFileCreated (object sender, FileSystemEventArgs e)
@@ -189,13 +188,6 @@ namespace MonoDevelop.Projects
 		void OnFileWatcherError (object sender, ErrorEventArgs e)
 		{
 			LoggingService.LogError ("FileService.FileWatcher error", e.GetException ());
-		}
-
-		static bool IsTempFileRename (RenamedEventArgs e)
-		{
-			var path = new FilePath (e.FullPath);
-			var backupFileName = path.ParentDirectory.Combine (".#" + path.FileName);
-			return backupFileName == e.OldFullPath;
 		}
 	}
 }
